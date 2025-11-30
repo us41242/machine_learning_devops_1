@@ -51,10 +51,33 @@ def go(config: DictConfig):
             )
 
         if "basic_cleaning" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            run = wandb.init(job_type="basic_cleaning")
+            # 1. Download the artifact (raw data)
+            artifact = run.use_artifact("sample.csv:latest")
+            artifact_path = artifact.file()
+
+            # 2. Load data
+            import pandas as pd
+            df = pd.read_csv(artifact_path)
+
+            # 3. Clean data using Config (Rubric Requirement)
+            min_price = config['etl']['min_price']
+            max_price = config['etl']['max_price']
+            
+            # Filter rows based on price
+            df = df[(df['price'] > min_price) & (df['price'] < max_price)]
+
+            # 4. Save and Upload Clean Data
+            df.to_csv("clean_sample.csv", index=False)
+            
+            clean_artifact = wandb.Artifact(
+                name="clean_sample.csv",
+                type="cleaned_data",
+                description="Data cleaned by basic_cleaning step"
+            )
+            clean_artifact.add_file("clean_sample.csv")
+            run.log_artifact(clean_artifact)
+            run.finish()
 
         if "data_check" in active_steps:
             ##################
