@@ -80,9 +80,10 @@ def go(config: DictConfig):
             run.finish()
 
         if "data_check" in active_steps:
-            # Run the data check component we just edited
+            # Run the data check component
             _ = mlflow.run(
-                "src/data_check",
+                # FIX: Use absolute path so MLflow finds the folder regardless of Hydra's working dir
+                os.path.join(hydra.utils.get_original_cwd(), "src/data_check"),
                 "main",
                 env_manager="conda",
             )
