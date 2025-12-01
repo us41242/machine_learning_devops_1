@@ -1,0 +1,13 @@
+name: test_regression_model
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10               # <--- This guarantees compatibility
+  - pip
+  - pandas
+  - scikit-learn=1.5.2
+  - wandb
+  - pip:
+      - mlflow
+      - hydra-core

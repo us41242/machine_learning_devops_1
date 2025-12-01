@@ -127,14 +127,15 @@ def go(config: DictConfig):
 
 
         if "test_regression_model" in active_steps:
-            # Rubric Requirement: Verify test set performance is comparable to validation
+            # Rubric Requirement: Verify test set performance
+            # Uses the local component to ensure environment consistency (Python 3.10)
             _ = mlflow.run(
-                f"{config['main']['components_repository']}/test_regression_model",
+                os.path.join(hydra.utils.get_original_cwd(), "src/test_regression_model"), 
                 "main",
-                env_manager="local",
+                env_manager="conda",
                 parameters={
-                    "mlflow_model": "model_export:prod",     # Checks the model tagged "prod"
-                    "test_dataset": "test_data.csv:latest"   # Checks against the test split
+                    "mlflow_model": "model_export:prod",
+                    "test_dataset": "test_data.csv:latest"
                 }
             )
 
