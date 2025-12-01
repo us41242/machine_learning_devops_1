@@ -93,7 +93,7 @@ def go(config: DictConfig):
                 "main",
                 env_manager="conda",
                 parameters={
-                    "input": "clean_sample.csv",
+                    "input": "clean_sample.csv:latest",  # <--- ADD ":latest" HERE
                     "test_size": config["modeling"]["test_size"],
                     "stratify_by": config["modeling"]["stratify_by"],
                     "random_seed": config["modeling"]["random_seed"]
