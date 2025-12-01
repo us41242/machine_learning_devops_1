@@ -55,7 +55,7 @@ def go(args):
     trainval_local_path = run.use_artifact(args.trainval_artifact).file()
    
     X = pd.read_csv(trainval_local_path)
-    y = X.pop("price")  # this removes the column "price" from X and puts it into y
+    y = X.pop("price")  # Remove the column "price" from X and puts it into y
 
     logger.info(f"Minimum price: {y.min()}, Maximum price: {y.max()}")
 
@@ -67,7 +67,7 @@ def go(args):
 
     sk_pipe, processed_features = get_inference_pipeline(rf_config, args.max_tfidf_features)
 
-    # Then fit it to the X_train, y_train data
+    # Fit it to the X_train, y_train data
     logger.info("Fitting")
 
     sk_pipe.fit(X_train, y_train)
@@ -94,7 +94,7 @@ def go(args):
         input_example=X_train.iloc[:5]
     )
 
-    # Upload the model we just exported to W&B
+    # Upload the model exported to W&B
     artifact = wandb.Artifact(
         args.output_artifact,
         type='model_export',
@@ -119,9 +119,9 @@ def go(args):
 
 
 def plot_feature_importance(pipe, feat_names):
-    # We collect the feature importance for all non-nlp features first
+    # Collect the feature importance for all non-nlp features first
     feat_imp = pipe["random_forest"].feature_importances_[: len(feat_names)-1]
-    # For the NLP feature we sum across all the TF-IDF dimensions into a global
+    # For the NLP feature sum across all the TF-IDF dimensions into a global
     # NLP importance
     nlp_importance = sum(pipe["random_forest"].feature_importances_[len(feat_names) - 1:])
     feat_imp = np.append(feat_imp, nlp_importance)
@@ -134,7 +134,7 @@ def plot_feature_importance(pipe, feat_names):
 
 
 def get_inference_pipeline(rf_config, max_tfidf_features):
-    # Let's handle the categorical features first
+    # Handle the categorical features first
     # Ordinal categorical are categorical values for which the order is meaningful
     ordinal_categorical = ["room_type"]
     non_ordinal_categorical = ["neighbourhood_group"]
@@ -149,7 +149,7 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
         OneHotEncoder(handle_unknown="ignore")
     )
 
-    # Let's impute the numerical columns to make sure we can handle missing values
+    # Impute the numerical columns to make sure we can handle missing values
     zero_imputed = [
         "minimum_nights",
         "number_of_reviews",
@@ -179,7 +179,7 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
         ),
     )
 
-    # Let's put everything together
+    # Put everything together
     preprocessor = ColumnTransformer(
         transformers=[
             ("ordinal_cat", ordinal_categorical_preproc, ordinal_categorical),
